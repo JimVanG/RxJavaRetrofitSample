@@ -3,23 +3,21 @@ package com.jimvang.rxjavaretrofitsample;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jimvang.rxjavaretrofitsample.dummy.DummyContent;
+import com.jimvang.rxjavaretrofitsample.Model.UserItem;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * An activity representing a list of Items. This activity
@@ -38,6 +36,9 @@ public class ItemListActivity extends AppCompatActivity
      */
     private boolean mTwoPane;
 
+    CompositeDisposable disposable = new CompositeDisposable();
+    List<UserItem> userItems = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,17 +48,6 @@ public class ItemListActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         if (findViewById(R.id.item_detail_container) != null)
         {
@@ -76,7 +66,7 @@ public class ItemListActivity extends AppCompatActivity
     private void setupRecyclerView(@NonNull RecyclerView recyclerView)
     {
         recyclerView
-                .setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+                .setAdapter(new SimpleItemRecyclerViewAdapter(this, userItems, mTwoPane));
     }
 
     public static class SimpleItemRecyclerViewAdapter
@@ -84,18 +74,19 @@ public class ItemListActivity extends AppCompatActivity
     {
 
         private final ItemListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<UserItem> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
+                UserItem item = (UserItem) view.getTag();
                 if (mTwoPane)
                 {
                     Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
+                                        String.valueOf(item.getId()));
                     ItemDetailFragment fragment = new ItemDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -106,7 +97,7 @@ public class ItemListActivity extends AppCompatActivity
                 {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, String.valueOf(item.getId()));
 
                     context.startActivity(intent);
                 }
@@ -115,7 +106,7 @@ public class ItemListActivity extends AppCompatActivity
 
         SimpleItemRecyclerViewAdapter(
                 ItemListActivity parent,
-                List<DummyContent.DummyItem> items,
+                List<UserItem> items,
                 boolean twoPane)
         {
             mValues = items;
@@ -134,8 +125,8 @@ public class ItemListActivity extends AppCompatActivity
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position)
         {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues.get(position).getName());
+            holder.mContentView.setText(mValues.get(position).getUsername());
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
@@ -155,8 +146,8 @@ public class ItemListActivity extends AppCompatActivity
             ViewHolder(View view)
             {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = (TextView) view.findViewById(R.id.nameId);
+                mContentView = (TextView) view.findViewById(R.id.usernameId);
             }
         }
     }
