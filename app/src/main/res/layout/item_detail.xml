@@ -7,7 +7,7 @@
 
 
     <TextView
-            android:text="User:"
+            android:text="@string/name_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/userId"
@@ -15,7 +15,7 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="26dp"
             android:textSize="18sp" android:textAlignment="viewStart"/>
     <TextView
-            android:text="Title:"
+            android:text="@string/title_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/titleId"
@@ -29,7 +29,7 @@
                                                 app:layout_constraintGuide_begin="20dp"
                                                 android:orientation="vertical"/>
     <TextView
-            android:text="Body:"
+            android:text="@string/body_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/bodyId" app:layout_constraintStart_toStartOf="parent"

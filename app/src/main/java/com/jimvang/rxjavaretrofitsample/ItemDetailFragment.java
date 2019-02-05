@@ -49,6 +49,17 @@ public class ItemDetailFragment extends Fragment
     {
     }
 
+    public static ItemDetailFragment NewInstance(String userId)
+    {
+        ItemDetailFragment fragment = new ItemDetailFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_ITEM_ID, userId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -65,7 +76,7 @@ public class ItemDetailFragment extends Fragment
                 .findViewById(R.id.toolbar_layout);
         if (appBarLayout != null)
         {
-            appBarLayout.setTitle("Posts");
+            appBarLayout.setTitle(getActivity().getResources().getString(R.string.posts_toolbar));
         }
 
         if (TextUtils.isEmpty(userId))
@@ -85,11 +96,10 @@ public class ItemDetailFragment extends Fragment
     {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
+        // Show the content as text in TextViews.
         userId = ((TextView) rootView.findViewById(R.id.userId));
         titleId = ((TextView) rootView.findViewById(R.id.titleId));
         bodyId = ((TextView) rootView.findViewById(R.id.bodyId));
-
 
         return rootView;
     }
@@ -123,8 +133,9 @@ public class ItemDetailFragment extends Fragment
             return;
         }
 
-        userId.setText(String.valueOf(mItem.getUserId()));
-        titleId.setText(mItem.getTitle());
-        bodyId.setText(mItem.getBody());
+        userId.setText(String.format(getString(R.string.name_item),
+                                     String.valueOf(mItem.getUserId())));
+        titleId.setText(String.format(getString(R.string.title_post), mItem.getTitle()));
+        bodyId.setText(String.format(getString(R.string.body_post), mItem.getBody()));
     }
 }

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">RxJavaRetrofitSample</string>
-    <string name="title_item_detail">Item Detail</string>
+    <string name="posts_toolbar">Posts</string>
+    <string name="name_item">Name: %1$s</string>
+    <string name="username_item">Username: %1$s</string>
+    <string name="title_post">Post Title: %1$s</string>
+    <string name="body_post">Post Body: %1$s</string>
 </resources>

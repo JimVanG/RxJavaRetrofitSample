@@ -3,6 +3,8 @@ package com.jimvang.rxjavaretrofitsample.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 /**
  * Created by James Van Gaasbeck on 2/4/19.
  */
@@ -107,5 +109,40 @@ public class PostsItem
     {
         this.body = body;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        PostsItem postsItem = (PostsItem) o;
+        return userId == postsItem.userId &&
+                id == postsItem.id &&
+                Objects.equals(title, postsItem.title) &&
+                Objects.equals(body, postsItem.body);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(userId, id, title, body);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "PostsItem{" +
+                "userId=" + userId +
+                ", id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                '}';
     }
 }

@@ -26,4 +26,5 @@ public class PointlessInterceptor implements Interceptor
               "This interceptor is for practice purposes and does nothing.");
         return chain.proceed(chain.request());
     }
+
 }

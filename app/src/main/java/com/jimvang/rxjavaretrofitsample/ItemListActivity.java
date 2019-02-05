@@ -72,6 +72,7 @@ public class ItemListActivity extends AppCompatActivity
 
         recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
+        recyclerView.setHasFixedSize(true);
         setupRecyclerView((RecyclerView) recyclerView);
 
         subscribeToData();
@@ -117,34 +118,28 @@ public class ItemListActivity extends AppCompatActivity
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>
     {
 
-        private final ItemListActivity mParentActivity;
+        private ItemListActivity mParentActivity;
         private List<UserItem> mValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener()
+        private boolean mTwoPane;
+        private final View.OnClickListener mOnClickListener = (view) ->
         {
-            @Override
-            public void onClick(View view)
-            {
-                UserItem item = (UserItem) view.getTag();
-                if (mTwoPane)
-                {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
-                                        String.valueOf(item.getId()));
-                    ItemDetailFragment fragment = new ItemDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
-                            .commit();
-                }
-                else
-                {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, String.valueOf(item.getId()));
 
-                    context.startActivity(intent);
-                }
+            UserItem item = (UserItem) view.getTag();
+            if (mTwoPane)
+            {
+                ItemDetailFragment fragment = ItemDetailFragment
+                        .NewInstance(String.valueOf(item.getId()));
+                mParentActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.item_detail_container, fragment)
+                        .commit();
+            }
+            else
+            {
+                Context context = view.getContext();
+                Intent intent = new Intent(context, ItemDetailActivity.class);
+                intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, String.valueOf(item.getId()));
+
+                context.startActivity(intent);
             }
         };
 

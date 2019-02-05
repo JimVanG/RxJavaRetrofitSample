@@ -3,6 +3,8 @@ package com.jimvang.rxjavaretrofitsample.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class UserItem
 {
 
@@ -82,5 +84,38 @@ public class UserItem
     {
         this.username = username;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        UserItem userItem = (UserItem) o;
+        return id == userItem.id &&
+                Objects.equals(name, userItem.name) &&
+                Objects.equals(username, userItem.username);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, name, username);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "UserItem{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                '}';
     }
 }

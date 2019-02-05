@@ -17,6 +17,6 @@ public interface UserPostsApi
     @GET("users")
     Observable<List<UserItem>> getUsers();
 
-    @GET("posts")
+    @GET("posts?")
     Observable<List<PostsItem>> getUserPosts(@Query("userId") String userId);
 }
