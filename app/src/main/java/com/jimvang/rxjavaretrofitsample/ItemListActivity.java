@@ -9,15 +9,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jimvang.rxjavaretrofitsample.Model.UserItem;
+import com.jimvang.rxjavaretrofitsample.api.RetrofitClient;
+import com.jimvang.rxjavaretrofitsample.api.UserPostsApi;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * An activity representing a list of Items. This activity
@@ -36,8 +41,12 @@ public class ItemListActivity extends AppCompatActivity
      */
     private boolean mTwoPane;
 
+    RecyclerView recyclerView;
+
     CompositeDisposable disposable = new CompositeDisposable();
     List<UserItem> userItems = new ArrayList<>();
+    UserPostsApi api;
+    private SimpleItemRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,15 +67,50 @@ public class ItemListActivity extends AppCompatActivity
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.item_list);
+        RetrofitClient client = RetrofitClient.getInstance();
+        api = client.createService(UserPostsApi.class);
+
+        recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+
+        subscribeToData();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        disposable.clear();
+        super.onDestroy();
+    }
+
+    private void subscribeToData()
+    {
+        disposable.add(api.getUsers()
+                               .subscribeOn(Schedulers.io())
+                               .observeOn(AndroidSchedulers.mainThread())
+                               .subscribe(this::updateRecyclerView));
+    }
+
+    private void updateRecyclerView(@Nullable List<UserItem> items)
+    {
+        if (recyclerView == null)
+        {
+            return;
+        }
+
+        if (recyclerView.getAdapter() == null)
+        {
+            setupRecyclerView(recyclerView);
+        }
+
+        adapter.updateListItems(items);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView)
     {
-        recyclerView
-                .setAdapter(new SimpleItemRecyclerViewAdapter(this, userItems, mTwoPane));
+        adapter = new SimpleItemRecyclerViewAdapter(this, userItems, mTwoPane);
+        recyclerView.setAdapter(adapter);
     }
 
     public static class SimpleItemRecyclerViewAdapter
@@ -74,7 +118,7 @@ public class ItemListActivity extends AppCompatActivity
     {
 
         private final ItemListActivity mParentActivity;
-        private final List<UserItem> mValues;
+        private List<UserItem> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener()
         {
@@ -114,8 +158,9 @@ public class ItemListActivity extends AppCompatActivity
             mTwoPane = twoPane;
         }
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
         {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_list_content, parent, false);
@@ -123,7 +168,7 @@ public class ItemListActivity extends AppCompatActivity
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position)
+        public void onBindViewHolder(@NonNull final ViewHolder holder, int position)
         {
             holder.mIdView.setText(mValues.get(position).getName());
             holder.mContentView.setText(mValues.get(position).getUsername());
@@ -136,6 +181,17 @@ public class ItemListActivity extends AppCompatActivity
         public int getItemCount()
         {
             return mValues.size();
+        }
+
+        public void updateListItems(List<UserItem> items)
+        {
+            mValues = items;
+            if (mValues == null)
+            {
+                notifyDataSetChanged();
+                return;
+            }
+            notifyItemRangeInserted(0, mValues.size());
         }
 
         class ViewHolder extends RecyclerView.ViewHolder
