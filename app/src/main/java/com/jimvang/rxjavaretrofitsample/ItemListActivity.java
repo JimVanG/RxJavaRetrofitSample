@@ -165,8 +165,14 @@ public class ItemListActivity extends AppCompatActivity
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position)
         {
-            holder.mIdView.setText(mValues.get(position).getName());
-            holder.mContentView.setText(mValues.get(position).getUsername());
+            holder.mIdView.setText(String.format(holder.mContentView.getContext().getResources()
+                                                         .getString(R.string.name_item), mValues
+                                                         .get(position).getName()));
+            holder.mContentView
+                    .setText(String.format(holder.mContentView.getContext().getResources()
+                                                   .getString(R.string.username_item), mValues
+                                                   .get(position).getUsername()));
+
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);

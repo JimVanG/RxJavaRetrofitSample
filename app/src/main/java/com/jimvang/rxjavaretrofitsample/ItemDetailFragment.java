@@ -123,9 +123,13 @@ public class ItemDetailFragment extends Fragment
     private void updateUi(List<PostsItem> postsItems)
     {
         Random rn = new Random();
-        int range = postsItems.size() + 1;
+        int range = postsItems.size();
         int randomNum = rn.nextInt(range);
 
+        if (randomNum >= postsItems.size())
+        {
+            randomNum = 3;
+        }
         mItem = postsItems.get(randomNum);
 
         if (mItem == null)
