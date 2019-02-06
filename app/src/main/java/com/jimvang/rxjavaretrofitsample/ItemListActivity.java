@@ -34,7 +34,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ItemListActivity extends AppCompatActivity
 {
-
+    private static final String TAG = "ItemListActivity";
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -73,7 +73,7 @@ public class ItemListActivity extends AppCompatActivity
         recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(recyclerView);
 
         subscribeToData();
     }

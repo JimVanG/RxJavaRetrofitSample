@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -29,6 +30,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ItemDetailFragment extends Fragment
 {
+    private static final String TAG = "ItemDetailFragment";
+
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -91,7 +94,7 @@ public class ItemDetailFragment extends Fragment
 
     @Override
     public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
+            @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
@@ -108,7 +111,6 @@ public class ItemDetailFragment extends Fragment
     public void onDestroy()
     {
         disposable.clear();
-        disposable = null;
         super.onDestroy();
     }
 
